@@ -1,0 +1,36 @@
+--- # myfirst yaml
+ - hosts: all
+   remote_user: ansible
+   become: yes
+   become_method: sudo
+   connection: ssh
+   gather_facts: yes
+   vars:
+      username: myuser
+   tasks:
+    - name: Installing telnet on both hosts
+      yum:
+         name: telnet
+         state: latest
+    - name: Installing httpd
+      yum: 
+         name: httpd
+         state: latest
+      register: yum
+    - name: print the output
+      debug: var=yum 
+    - name: start service
+      service:
+         name: httpd 
+         state: started  
+      notify:
+       - restartservice
+   handlers:    
+    - name: restartservice
+      service:
+         name: httpd
+         state: restarted    
+    - name: Creating file
+      file: 
+         path: /root/vignesh.txt
+         state: touch
